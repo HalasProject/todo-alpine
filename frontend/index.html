@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./index.css">
+    <title>SKAALAB - JOBDAY</title>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.0/dist/alpine.min.js" defer></script>
+</head>
+<body>
+    <div x-data="loginSystem()"> 
+        <template x-if="!loggedIn">
+            <div class="login-box">
+                <h1>MY TODO</h1>
+          
+                <!-- ======= Username ======= -->
+                <div class="textbox">
+                  <i class="fa fa-user" aria-hidden="true"></i>
+                  <input x-model="email" type="email" placeholder="Email Adresses" name="" />
+                </div>
+              
+                <!-- ======= Sign in ======= -->
+                <input  @click="login()" class="btn" type="button" name="" value="Sign In" />
+            </div>
+          
+        </template>
+        <template x-if="loggedIn" id="todo-app">
+            <div x-data="toDoList()" id="container">
+                <!--  Tasks List  -->
+                <div id="tasks">
+                    <template x-if="toDoCount() === 0">
+                        <div id="notification">Sorry, your task list is empty.</div>
+                    </template>
+                    <template x-if="toDoCount() > 0">
+                        <div id="notification">Total Todo: <span x-text="toDoCount()"></span>
+                                                Completed: <span x-text="numberOfToDosCompleted()"></span></div>
+                    </template>
+                 <div class="space"></div>
+                  <ul id="tasksList">
+                      <template x-for="(todo, index) in todos" :key="index">
+                          <div>
+                            <li>
+                                <input  x-model="todo.completed" type="checkbox" style="margin-right: 10px;">
+                                <span @click="showMore(index)" :class="{ 'completed': todo.completed }" x-text="todo.todo.title"></span>
+                                <button @click="deleteToDo(index)" class='delete'>&#10006</button>
+                            
+                            </li>
+                            <template x-for="(todoChild, indexChild) in todo.children" :key="indexChild">
+                                <li style="margin-left: 15px;">
+                                    <input  x-model="todoChild.completed" type="checkbox" style="margin-right: 25px;">
+                                    <span @click="showMore(index,indexChild)" :class="{ 'completed': todoChild.completed }" x-text="todoChild.todo.title"></span>
+                                    <button @click="deleteToDo(index,indexChild)" class='delete'>&#10006</button>
+                                </li>
+                            </template>
+                        </div>
+                          
+                        </template>
+                  </ul>
+                </div>
+                
+                <div id="footer">
+                    <input class="input-group" x-model="newTodo.title"  type="text" placeholder="Task Title*"/>
+                    <textarea class="input-group" x-model="newTodo.description" id="taskDescription" placeholder="Description" cols="30" rows="5"></textarea>
+                    <label style="margin-left:10px;margin-bottom:5px">Child of:</label>
+                    <select x-model="childOf" class="input-group">
+                        <option value=""></option>
+                        <template x-for="(todo, index) in todos" :key="index">
+                            <option x-bind:value="index" x-text="todo.todo.title"></option>
+                        </template>
+                    </select>
+                    <input x-model="newTodo.date" type="date">
+                    <div class="flex-right">
+                        <button @click="addToDo()" id="taskAdd">+</button>
+                    </div>
+                    
+                </div>
+              </div>
+              
+        </template>
+        <template x-if="loggedIn">
+           <div @click="logout" id="logoutButton">&#10006</div>
+        </template>
+       
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="./script.js"></script>
+
+</body>
+</html>
